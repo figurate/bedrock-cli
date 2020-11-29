@@ -32,6 +32,9 @@ class TerraformSpec:
         # Environment variables to import to container
         self.evars = ['AWS_DEFAULT_REGION']
 
+        # Override default var file location..
+        self.var_file = None
+
         # Command-line variables
         self.cvars = []
 
@@ -56,7 +59,11 @@ class TerraformSpec:
         # Configure variables..
         workspace = current_workspace(self.blueprint_id)
         if self.args[0] in ['plan', 'apply', 'refresh']:
-            run_command = ' '.join(self.args) + f' -var-file="{workspace}.tfvars.json" /blueprint'
+            if self.var_file is not None:
+                run_command = ' '.join(self.args) + f' -var-file="{os.path.basename(self.var_file)}" /blueprint'
+            else:
+                run_command = ' '.join(self.args) + f' -var-file="{workspace}.tfvars.json" /blueprint'
+
         elif self.args[0] not in ['import', 'output', 'state', 'taint', 'untaint', 'version', 'workspace']:
             run_command = ' '.join(self.args) + ' /blueprint'
         else:
@@ -86,6 +93,12 @@ class TerraformSpec:
                 'mode': 'ro'
             }
         }
+        if self.var_file is not None:
+            # var file override also needs to be mounted..
+            volumes[os.path.abspath(self.var_file)] = {
+                'bind': f'/work/{os.path.basename(self.var_file)}',
+                'mode': 'ro'
+            }
 
         # Run container..
         if not self.dry_run:
