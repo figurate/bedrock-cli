@@ -32,6 +32,19 @@ def write_config(path, id, config):
         config_file.write(f'{json.dumps(config, indent=2)}\n')
 
 
+def read_blueprints():
+    try:
+        with open(f'{os.path.expanduser(f"~/.bedrock")}/blueprints.json', 'r') as blueprint_file:
+            return json.load(blueprint_file)
+    except IOError:
+        return {}
+
+
+def save_blueprints(blueprints):
+    with open(f'{os.path.expanduser(f"~/.bedrock")}/blueprints.json', 'w') as blueprint_file:
+        blueprint_file.write(f'{json.dumps(blueprints, indent=2)}\n')
+
+
 def current_workspace(path):
     try:
         with open(f'{os.path.expanduser(f"~/.bedrock/{path}")}/.terraform/environment', 'r') as env_file:
