@@ -3,3 +3,5 @@ docker>=4.4.0
 dockerpty
 boto3
 simple-term-menu
+pytest
+
