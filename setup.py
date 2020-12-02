@@ -8,7 +8,8 @@ with open("README.md", "r") as readme:
 setup(
     name='bedrockcli',
     version_config={
-        "version_format": "{tag}"
+        "version_format": "{tag}",
+        "starting_version": "0.9.0"
     },
     author='Ben Fortuna',
     author_email='fortuna@micronode.com',
@@ -16,7 +17,6 @@ setup(
     long_description=long_description,
     long_description_content_type='text/markdown',
     url='https://github.com/micronode/bedrock-cli',
-    # packages=find_packages("src"),
     packages=find_packages(),
     setup_requires=['better-setuptools-git-version'],
     install_requires=[

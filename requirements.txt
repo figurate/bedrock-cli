@@ -3,4 +3,4 @@ docker>=4.4.0
 dockerpty
 simple-term-menu
 pytest
-
+wheel
