@@ -8,7 +8,7 @@ with open("README.md", "r") as readme:
 setup(
     name='bedrockcli',
     version_config={
-        "version_format": "{tag}",
+        "version_format": "{tag}.dev{sha}",
         "starting_version": "0.9.0"
     },
     author='Ben Fortuna',
