@@ -122,7 +122,7 @@ class BedrockCli(object):
         spec.run()
 
     def config(self, args):
-        spec = ConfigSpec(None, None, dry_run=self.dryrun, verbose=self.verbose)
+        spec = ConfigSpec(None, dry_run=self.dryrun, verbose=self.verbose)
         spec.blueprint_id = self.get_blueprint()[0]
         spec.cvars = {}
         for cnf in args:
