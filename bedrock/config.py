@@ -3,10 +3,13 @@ from .utils import *
 
 class ConfigSpec:
 
-    def __init__(self, blueprint_id, instance_name, dry_run=False):
+    def __init__(self, blueprint_id, dry_run=False, verbose=False):
 
         # Enable dry run (skip backend configuration)
         self.dry_run = dry_run
+
+        # Enable verbose logging
+        self.verbose = verbose
 
         # Blueprint identifier
         self.blueprint_id = blueprint_id

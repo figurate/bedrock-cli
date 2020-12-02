@@ -12,10 +12,13 @@ class BlueprintSpec:
         }
     }
 
-    def __init__(self, blueprint_id, blueprint_image, dry_run=False):
+    def __init__(self, blueprint_id, blueprint_image, dry_run=False, verbose=False):
 
         # Enable dry run (skip backend configuration)
         self.dry_run = dry_run
+
+        # Enable verbose logging
+        self.verbose = verbose
 
         self.blueprint_id = blueprint_id
         self.blueprint_image = blueprint_image

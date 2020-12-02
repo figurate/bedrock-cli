@@ -13,12 +13,15 @@ class TerraformSpec:
     tf_commands = ['apply', 'destroy', 'force-unlock', 'graph', 'import', 'init', 'output', 'plan', 'providers', 'refresh', 'show',
                    'state', 'taint', 'untaint', 'version', 'workspace']
 
-    def __init__(self, blueprint_id, instance_name, dry_run=False):
+    def __init__(self, blueprint_id, instance_name, dry_run=False, verbose=False):
         # Docker image
         self.image = 'hashicorp/terraform'
 
         # Enable dry run (skip container creation)
         self.dry_run = dry_run
+
+        # Enable verbose logging
+        self.verbose = verbose
 
         # Blueprint identifier
         self.blueprint_id = blueprint_id
@@ -47,29 +50,39 @@ class TerraformSpec:
             print("Dry run enabled. No changes will be made.")
 
         # Configure container environment..
+        if self.verbose:
+            print(f"Importing environment variables: {self.evars}\n")
+
         environment = []
         for env_var in self.evars:
             append_env(environment, env_var, True)
 
         # Configure command line config
+        if self.verbose:
+            print(f"Configuring variable overrides: {self.cvars}\n")
+
         for cnf in self.cvars:
             cvar = cnf.split('=')
             environment.append(f'TF_VAR_{cvar[0]}={cvar[1]}')
 
         # Configure variables..
         workspace = current_workspace(self.blueprint_id)
+
         if self.args[0] in ['plan', 'apply', 'refresh']:
             if self.var_file is not None:
                 run_command = ' '.join(self.args) + f' -var-file="{os.path.basename(self.var_file)}" /blueprint'
             else:
                 run_command = ' '.join(self.args) + f' -var-file="{workspace}.tfvars.json" /blueprint'
 
-        elif self.args[0] not in ['import', 'output', 'state', 'taint', 'untaint', 'version', 'workspace']:
+        elif self.args[0] not in ['import', 'output', 'show', 'state', 'taint', 'untaint', 'version', 'workspace']:
             run_command = ' '.join(self.args) + ' /blueprint'
         else:
             run_command = ' '.join(self.args)
 
         # Initialise working directory
+        if self.verbose:
+            print(f"Initialising current workspace: {workspace}\n")
+
         init_config(f'{self.blueprint_id}', workspace)
 
         # Configure container volumes..
@@ -105,10 +118,12 @@ class TerraformSpec:
             container = None
             try:
                 print("Initialising Docker..")
-                print(f"Running Terraform command: {run_command}")
                 client = docker.from_env()
+
                 # container = client.containers.run(spec.image, spec.command, privileged=True, network_mode='host',
                 #                   remove=True, environment=environment, volumes=volumes, stdin_open=True, tty=True, detach=True)
+
+                print(f"Running Terraform command: {run_command}")
                 container = client.api.create_container(self.image, run_command, self.instance_name,
                                                         working_dir='/work',
                                                         host_config=client.api.create_host_config(binds=volumes),

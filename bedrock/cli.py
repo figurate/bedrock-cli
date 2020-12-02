@@ -39,6 +39,7 @@ class BedrockCli(object):
         parser.add_argument('-t', '--blueprint', metavar='<blueprint_id>',
                             help='optional blueprint identifier (bypass selection mode)')
         parser.add_argument('--dryrun', action='store_true', help='simulate execution without making any changes')
+        parser.add_argument('-v', '--verbose', action='store_true', help='output additional logs to stdout')
         parser.add_argument('-q', '--quiet', action='store_true', help='suppress execution output to stdout')
         parser.add_argument('-var-file', metavar='<var_file>', help='override default config')
         parser.add_argument('command', help='Subcommand to run', choices=['apply', 'destroy', 'force-unlock', 'graph', 'import', 'init', 'output', 'plan', 'providers', 'refresh', 'show',
@@ -50,6 +51,7 @@ class BedrockCli(object):
 
         self.blueprint_id = args.blueprint
         self.dryrun = args.dryrun
+        self.verbose = args.verbose
 
         if args.command in TerraformSpec.tf_commands:
             self.terraform(sys.argv[sys.argv.index(args.command):], var_file=args.var_file)
@@ -59,6 +61,8 @@ class BedrockCli(object):
             self.config(sys.argv[sys.argv.index(args.command) + 1:])
         elif args.command == 'blueprint':
             self.blueprint(sys.argv[sys.argv.index(args.command) + 1:])
+
+        sys.exit()
 
     def get_blueprint(self):
         blueprints = {**BlueprintSpec.default_blueprints, **read_blueprints()}
@@ -84,7 +88,7 @@ class BedrockCli(object):
             return backends[backend_index]
 
     def terraform(self, args, var_file=None):
-        spec = TerraformSpec(None, None, dry_run=self.dryrun)
+        spec = TerraformSpec(None, None, dry_run=self.dryrun, verbose=self.verbose)
         blueprint = self.get_blueprint()
         spec.blueprint_id = blueprint[0]
         spec.image = blueprint[1]['image']
@@ -109,7 +113,7 @@ class BedrockCli(object):
         parser.add_argument('--organization', metavar='organization>',
                             help='optional organization identifier (for remote storage via Terraform Cloud)')
 
-        spec = BackendSpec(None, dry_run=self.dryrun)
+        spec = BackendSpec(None, dry_run=self.dryrun, verbose=self.verbose)
         spec.blueprint_id = self.get_blueprint()[0]
         spec.backend_type = self.get_backend_type()
         spec.aws_account_id = '976651329757'
@@ -118,7 +122,7 @@ class BedrockCli(object):
         spec.run()
 
     def config(self, args):
-        spec = ConfigSpec(None, None, dry_run=self.dryrun)
+        spec = ConfigSpec(None, None, dry_run=self.dryrun, verbose=self.verbose)
         spec.blueprint_id = self.get_blueprint()[0]
         spec.cvars = {}
         for cnf in args:
@@ -128,7 +132,7 @@ class BedrockCli(object):
         spec.run()
 
     def blueprint(self, args):
-        spec = BlueprintSpec(None, None, dry_run=self.dryrun)
+        spec = BlueprintSpec(None, None, dry_run=self.dryrun, verbose=self.verbose)
         spec.blueprint_id = input("Blueprint ID: ")
         spec.blueprint_image = input("Blueprint Image: ")
 

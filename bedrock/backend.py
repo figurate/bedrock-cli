@@ -5,11 +5,14 @@ class BackendSpec:
 
     tf_backends = ['local', 's3', 'remote']
 
-    def __init__(self, blueprint_id, aws_account_id=None, organization=None, dry_run=False):
+    def __init__(self, blueprint_id, aws_account_id=None, organization=None, dry_run=False, verbose=False):
         self.backend_type = 's3'
 
         # Enable dry run (skip backend configuration)
         self.dry_run = dry_run
+
+        # Enable verbose logging
+        self.verbose = verbose
 
         # Blueprint identifier
         self.blueprint_id = blueprint_id
