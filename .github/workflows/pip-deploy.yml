@@ -33,6 +33,9 @@ jobs:
       - name: Test with pytest
         run: |
           pytest
+      - name: Create distribution
+        run: |
+          python3 setup.py sdist bdist_wheel
       - name: Publish a Python distribution to PyPI
         uses: pypa/gh-action-pypi-publish@master
         with:
