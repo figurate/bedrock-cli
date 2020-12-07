@@ -8,18 +8,18 @@ from .terraform import TerraformSpec
 from .backend import BackendSpec
 from .config import ConfigSpec
 from .blueprint import BlueprintSpec
-from .utils import read_blueprints
+from .utils import read_blueprints, ANSIColors
 
 
 class BedrockCli(object):
 
     def __init__(self):
-        parser = argparse.ArgumentParser(description='', usage='''bedrock <command> [<args>]
+        parser = argparse.ArgumentParser(description='', usage=f'''bedrock <command> [<args>]
          Available commands:
-            add-blueprint - configure available blueprints
+            {ANSIColors.BOLD}add-blueprint{ANSIColors.ENDC} - configure available blueprints
             apply
-            backend - configure the backend
-            config - configure instance variable overrides
+            {ANSIColors.BOLD}backend{ANSIColors.ENDC} - configure the backend
+            {ANSIColors.BOLD}config{ANSIColors.ENDC} - configure instance variable overrides
             destroy
             graph
             import
