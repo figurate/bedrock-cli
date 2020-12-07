@@ -8,18 +8,18 @@ from .terraform import TerraformSpec
 from .backend import BackendSpec
 from .config import ConfigSpec
 from .blueprint import BlueprintSpec
-from .utils import read_blueprints
+from .utils import read_blueprints, ANSIColors
 
 
 class BedrockCli(object):
 
     def __init__(self):
-        parser = argparse.ArgumentParser(description='', usage='''bedrock <command> [<args>]
+        parser = argparse.ArgumentParser(description='', usage=f'''bedrock <command> [<args>]
          Available commands:
-            add-blueprint - configure available blueprints
+            {ANSIColors.BOLD}blueprint{ANSIColors.ENDC} - configure available blueprints
             apply
-            backend - configure the backend
-            config - configure instance variable overrides
+            {ANSIColors.BOLD}backend{ANSIColors.ENDC} - configure the backend
+            {ANSIColors.BOLD}config{ANSIColors.ENDC} - configure instance variable overrides
             destroy
             graph
             import
@@ -43,7 +43,7 @@ class BedrockCli(object):
         parser.add_argument('-q', '--quiet', action='store_true', help='suppress execution output to stdout')
         parser.add_argument('-var-file', metavar='<var_file>', help='override default config')
         parser.add_argument('command', help='Subcommand to run', choices=['apply', 'destroy', 'force-unlock', 'graph', 'import', 'init', 'output', 'plan', 'providers', 'refresh', 'show',
-                                                                          'state', 'taint', 'untaint', 'version', 'workspace'] + ['add-blueprint', 'backend', 'config'])
+                                                                          'state', 'taint', 'untaint', 'version', 'workspace'] + ['blueprint', 'backend', 'config'])
         parser.add_argument('cmd_args', metavar='<cmd_args>',
                             help='additional arguments for sub-commands', nargs='*')
 
@@ -133,8 +133,9 @@ class BedrockCli(object):
 
     def blueprint(self, args):
         spec = BlueprintSpec(None, None, dry_run=self.dryrun, verbose=self.verbose)
-        spec.blueprint_id = input("Blueprint ID: ")
-        spec.blueprint_image = input("Blueprint Image: ")
+        if len(args) > 0 and args[0] == 'add':
+            spec.blueprint_id = input("Blueprint ID: ")
+            spec.blueprint_image = input("Blueprint Image: ")
 
         spec.run()
 

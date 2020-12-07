@@ -28,9 +28,13 @@ class BlueprintSpec:
             print("Dry run enabled. No changes will be made.")
 
         blueprints = read_blueprints()
-        blueprints[self.blueprint_id] = {
-            'image': self.blueprint_image
-        }
 
-        if not self.dry_run:
-            save_blueprints(blueprints)
+        if self.blueprint_id is not None:
+            blueprints[self.blueprint_id] = {
+                'image': self.blueprint_image
+            }
+
+            if not self.dry_run:
+                save_blueprints(blueprints)
+        else:
+            print(json.dumps(blueprints, indent=2))

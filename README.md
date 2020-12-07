@@ -20,6 +20,14 @@ Bedrock will manage the backend configuration, inputs and provider configuration
 your blueprint instances are accessible and easily managed from anywhere.
 
 
+## Getting Started
+
+You can install bedrock CLI via pip as follows:
+
+    $ pip install bedrockcli
+
+
+
 ## Projects
 
 As it is likely that you work with more than one Cloud environment, Bedrock supports multiple projects each with

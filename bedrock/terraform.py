@@ -57,6 +57,11 @@ class TerraformSpec:
         for env_var in self.evars:
             append_env(environment, env_var, True)
 
+        # Append optional environment variables..
+        for env_var in ['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY', 'AWS_SESSION_TOKEN', 'TF_ARGS',
+                        'http_proxy', 'https_proxy', 'no_proxy']:
+            append_env(environment, env_var)
+
         # Configure command line config
         if self.verbose:
             print(f"Configuring variable overrides: {self.cvars}\n")
