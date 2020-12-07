@@ -131,7 +131,8 @@ class TerraformSpec:
                 print(f"Running Terraform command: {run_command}")
                 container = client.api.create_container(self.image, run_command, self.instance_name,
                                                         working_dir='/work',
-                                                        host_config=client.api.create_host_config(binds=volumes),
+                                                        host_config=client.api.create_host_config(binds=volumes,
+                                                                                                  network_mode='host'),
                                                         stdin_open=True, tty=True, environment=environment)
 
                 dockerpty.start(client.api, container)
