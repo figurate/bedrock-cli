@@ -58,7 +58,7 @@ class TerraformSpec:
             append_env(environment, env_var, True)
 
         # Append optional environment variables..
-        for env_var in ['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY', 'AWS_SESSION_TOKEN', 'TF_ARGS',
+        for env_var in ['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY', 'AWS_SESSION_TOKEN', 'AWS_PROFILE', 'TF_ARGS',
                         'http_proxy', 'https_proxy', 'no_proxy']:
             append_env(environment, env_var)
 
