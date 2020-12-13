@@ -16,6 +16,8 @@ class TerraformSpec:
     def __init__(self, blueprint_id, instance_name, dry_run=False, verbose=False):
         # Docker image
         self.image = 'hashicorp/terraform'
+        self.image_tag = None
+        self.image_registry = None
 
         # Enable dry run (skip container creation)
         self.dry_run = dry_run
@@ -123,13 +125,26 @@ class TerraformSpec:
             container = None
             try:
                 print("Initialising Docker..")
+
                 client = docker.from_env()
 
                 # container = client.containers.run(spec.image, spec.command, privileged=True, network_mode='host',
                 #                   remove=True, environment=environment, volumes=volumes, stdin_open=True, tty=True, detach=True)
 
+                if self.image_registry is not None:
+                    image_ref = self.image_registry + "/" + self.image
+                else:
+                    image_ref = self.image
+
+                if self.image_tag is not None:
+                    image_ref += ":" + self.image_tag
+
                 print(f"Running Terraform command: {run_command}")
-                container = client.api.create_container(self.image, run_command, self.instance_name,
+
+                if self.verbose:
+                    print(f"Creating container from image: {image_ref}\n")
+
+                container = client.api.create_container(image_ref, run_command, self.instance_name,
                                                         working_dir='/work',
                                                         host_config=client.api.create_host_config(binds=volumes,
                                                                                                   network_mode='host'),

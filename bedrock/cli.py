@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import argparse
 import sys
+import os
 
 from simple_term_menu import TerminalMenu
 
@@ -92,6 +93,8 @@ class BedrockCli(object):
         blueprint = self.get_blueprint()
         spec.blueprint_id = blueprint[0]
         spec.image = blueprint[1]['image']
+        spec.image_registry = os.environ.get('BLUEPRINT_REGISTRY')
+        spec.image_tag = os.environ.get('BLUEPRINT_TAG')
         spec.var_file = var_file
 
         # instance_name = input("Instance name: ")
