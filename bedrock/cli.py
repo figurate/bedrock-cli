@@ -54,7 +54,7 @@ class BedrockCli(object):
         for arg in unknown:
             if arg.startswith(("-", "--")):
                 # store true for args without assignment
-                if arg.index('=') >= 0:
+                if "=" not in arg:
                     parser.add_argument(arg, action='store_true')
                 else:
                     parser.add_argument(arg)
