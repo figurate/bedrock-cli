@@ -39,6 +39,7 @@ class BedrockCli(object):
 
         parser.add_argument('-t', '--blueprint', metavar='<blueprint_id>',
                             help='optional blueprint identifier (bypass selection mode)')
+        parser.add_argument('--pull', action='store_true', help='pull blueprint image prior to command execution')
         parser.add_argument('--dryrun', action='store_true', help='simulate execution without making any changes')
         parser.add_argument('-v', '--verbose', action='store_true', help='output additional logs to stdout')
         parser.add_argument('-q', '--quiet', action='store_true', help='suppress execution output to stdout')
@@ -51,6 +52,7 @@ class BedrockCli(object):
         args = parser.parse_args(sys.argv[1:])
 
         self.blueprint_id = args.blueprint
+        self.pull_image = args.pull
         self.dryrun = args.dryrun
         self.verbose = args.verbose
 
@@ -72,7 +74,7 @@ class BedrockCli(object):
             return [self.blueprint_id, blueprints[self.blueprint_id]]
         else:
             blueprint_ids = list(blueprints.keys())
-            blueprint_menu = TerminalMenu(blueprint_ids, show_search_hint=True)
+            blueprint_menu = TerminalMenu(blueprint_ids, title="Select blueprint:", show_search_hint=True)
             blueprint_index = blueprint_menu.show()
             blueprint_id = blueprint_ids[blueprint_index]
             return [blueprint_id, blueprints[blueprint_id]]
@@ -89,7 +91,7 @@ class BedrockCli(object):
             return backends[backend_index]
 
     def terraform(self, args, var_file=None):
-        spec = TerraformSpec(None, None, dry_run=self.dryrun, verbose=self.verbose)
+        spec = TerraformSpec(None, None, pull_image=self.pull_image, dry_run=self.dryrun, verbose=self.verbose)
         blueprint = self.get_blueprint()
         spec.blueprint_id = blueprint[0]
         spec.image = blueprint[1]['image']

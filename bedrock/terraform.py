@@ -13,11 +13,14 @@ class TerraformSpec:
     tf_commands = ['apply', 'destroy', 'force-unlock', 'graph', 'import', 'init', 'output', 'plan', 'providers', 'refresh', 'show',
                    'state', 'taint', 'untaint', 'version', 'workspace']
 
-    def __init__(self, blueprint_id, instance_name, dry_run=False, verbose=False):
+    def __init__(self, blueprint_id, instance_name, pull_image=False, dry_run=False, verbose=False):
         # Docker image
         self.image = 'hashicorp/terraform'
         self.image_tag = None
         self.image_registry = None
+
+        # Pull image prior to run
+        self.pull_image = pull_image
 
         # Enable dry run (skip container creation)
         self.dry_run = dry_run
@@ -135,6 +138,9 @@ class TerraformSpec:
                     image_ref = self.image_registry + "/" + self.image
                 else:
                     image_ref = self.image
+
+                if self.pull_image:
+                    client.api.pull(image_ref, self.image_tag)
 
                 if self.image_tag is not None:
                     image_ref += ":" + self.image_tag
