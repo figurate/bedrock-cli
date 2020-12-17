@@ -11,6 +11,9 @@ class ConfigSpec:
         # Enable verbose logging
         self.verbose = verbose
 
+        # Blueprint home directory
+        self.blueprint_home = '~/.bedrock'
+
         # Blueprint identifier
         self.blueprint_id = blueprint_id
 
@@ -22,5 +25,5 @@ class ConfigSpec:
             print("Dry run enabled. No changes will be made.")
 
         if not self.dry_run:
-            workspace = current_workspace(self.blueprint_id)
-            write_config(self.blueprint_id, workspace, self.cvars)
+            workspace = current_workspace(self.blueprint_id, self.blueprint_home)
+            write_config(self.blueprint_id, self.blueprint_home, workspace, self.cvars)

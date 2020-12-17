@@ -17,9 +17,9 @@ class BedrockCli(object):
     def __init__(self):
         parser = argparse.ArgumentParser(description='', usage=f'''bedrock <command> [<args>]
          Available commands:
-            {ANSIColors.BOLD}blueprint{ANSIColors.ENDC} - configure available blueprints
             apply
             {ANSIColors.BOLD}backend{ANSIColors.ENDC} - configure the backend
+            {ANSIColors.BOLD}blueprint{ANSIColors.ENDC} - configure available blueprints
             {ANSIColors.BOLD}config{ANSIColors.ENDC} - configure instance variable overrides
             destroy
             graph
@@ -76,8 +76,8 @@ class BedrockCli(object):
 
         sys.exit()
 
-    def get_blueprint(self):
-        blueprints = {**BlueprintSpec.default_blueprints, **read_blueprints()}
+    def get_blueprint(self, blueprint_home):
+        blueprints = {**BlueprintSpec.default_blueprints, **read_blueprints(blueprint_home)}
 
         if self.blueprint_id in blueprints.keys():
             return [self.blueprint_id, blueprints[self.blueprint_id]]
@@ -101,11 +101,13 @@ class BedrockCli(object):
 
     def terraform(self, args, var_file=None):
         spec = TerraformSpec(None, None, pull_image=self.pull_image, dry_run=self.dryrun, verbose=self.verbose)
-        blueprint = self.get_blueprint()
+        blueprint_home = BlueprintSpec.get_blueprint_home()
+        blueprint = self.get_blueprint(blueprint_home)
+        spec.blueprint_home = blueprint_home
         spec.blueprint_id = blueprint[0]
         spec.image = blueprint[1]['image']
-        spec.image_registry = os.environ.get('BLUEPRINT_REGISTRY')
-        spec.image_tag = os.environ.get('BLUEPRINT_TAG')
+        spec.image_registry = BlueprintSpec.get_blueprint_registry()
+        spec.image_tag = BlueprintSpec.get_blueprint_tag()
         spec.var_file = var_file
 
         # instance_name = input("Instance name: ")
@@ -128,7 +130,9 @@ class BedrockCli(object):
                             help='optional organization identifier (for remote storage via Terraform Cloud)')
 
         spec = BackendSpec(None, dry_run=self.dryrun, verbose=self.verbose)
-        spec.blueprint_id = self.get_blueprint()[0]
+        blueprint_home = BlueprintSpec.get_blueprint_home()
+        spec.blueprint_home = blueprint_home
+        spec.blueprint_id = self.get_blueprint(blueprint_home)[0]
         spec.backend_type = self.get_backend_type()
 
         if spec.backend_type == 's3':
@@ -140,7 +144,9 @@ class BedrockCli(object):
 
     def config(self, args):
         spec = ConfigSpec(None, dry_run=self.dryrun, verbose=self.verbose)
-        spec.blueprint_id = self.get_blueprint()[0]
+        blueprint_home = BlueprintSpec.get_blueprint_home()
+        spec.blueprint_home = blueprint_home
+        spec.blueprint_id = self.get_blueprint(blueprint_home)[0]
         spec.cvars = {}
         for cnf in args:
             cvar = cnf.split('=')
@@ -151,6 +157,8 @@ class BedrockCli(object):
     def blueprint(self, args):
         spec = BlueprintSpec(None, None, dry_run=self.dryrun, verbose=self.verbose)
         if len(args) > 0 and args[0] == 'add':
+            blueprint_home = BlueprintSpec.get_blueprint_home()
+            spec.blueprint_home = blueprint_home
             spec.blueprint_id = input("Blueprint ID: ")
             spec.blueprint_image = input("Blueprint Image: ")
 

@@ -29,6 +29,9 @@ class TerraformSpec:
         # Enable verbose logging
         self.verbose = verbose
 
+        # Blueprint home directory
+        self.blueprint_home = '~/.bedrock'
+
         # Blueprint identifier
         self.blueprint_id = blueprint_id
 
@@ -83,7 +86,7 @@ class TerraformSpec:
             environment.append(f'TF_VAR_{cvar[0]}={cvar[1]}')
 
         # Configure variables..
-        workspace = current_workspace(self.blueprint_id)
+        workspace = current_workspace(self.blueprint_id, self.blueprint_home)
 
         if self.args[0] in ['plan', 'apply', 'refresh']:
             if self.var_file is not None:
@@ -102,11 +105,11 @@ class TerraformSpec:
         if self.verbose:
             print(f"Initialising current workspace: {workspace}\n")
 
-        init_config(f'{self.blueprint_id}', workspace)
+        init_config(self.blueprint_id, self.blueprint_home, workspace)
 
         # Configure container volumes..
         volumes = {
-            os.path.expanduser(f'~/.bedrock/{self.blueprint_id}'): {
+            os.path.expanduser(f'{self.blueprint_home}/{self.blueprint_id}'): {
                 'bind': '/work',
                 'mode': 'rw'
             },
@@ -115,7 +118,7 @@ class TerraformSpec:
                 'mode': 'ro'
             },
             # backend config must be in same directory as rest of configuration..
-            os.path.expanduser(f'~/.bedrock/{self.blueprint_id}/backend.tf'): {
+            os.path.expanduser(f'{self.blueprint_home}/{self.blueprint_id}/backend.tf'): {
                 'bind': '/blueprint/backend.tf',
                 'mode': 'ro'
             },

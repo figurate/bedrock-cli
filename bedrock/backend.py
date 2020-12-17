@@ -14,6 +14,9 @@ class BackendSpec:
         # Enable verbose logging
         self.verbose = verbose
 
+        # Blueprint home directory
+        self.blueprint_home = '~/.bedrock'
+
         # Blueprint identifier
         self.blueprint_id = blueprint_id
 
@@ -52,4 +55,4 @@ class BackendSpec:
 """
 
         if not self.dry_run:
-            write_backend(self.blueprint_id, backend)
+            write_backend(self.blueprint_id, self.blueprint_home, backend)
