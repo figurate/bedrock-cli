@@ -49,8 +49,17 @@ class BedrockCli(object):
         parser.add_argument('cmd_args', metavar='<cmd_args>',
                             help='additional arguments for sub-commands', nargs='*')
 
-        args = parser.parse_args(sys.argv[1:])
+        args, unknown = parser.parse_known_args(sys.argv[1:])
 
+        for arg in unknown:
+            if arg.startswith(("-", "--")):
+                # store true for args without assignment
+                if arg.index('=') >= 0:
+                    parser.add_argument(arg, action='store_true')
+                else:
+                    parser.add_argument(arg)
+
+        args = parser.parse_args()
         self.blueprint_id = args.blueprint
         self.pull_image = args.pull
         self.dryrun = args.dryrun
@@ -121,8 +130,11 @@ class BedrockCli(object):
         spec = BackendSpec(None, dry_run=self.dryrun, verbose=self.verbose)
         spec.blueprint_id = self.get_blueprint()[0]
         spec.backend_type = self.get_backend_type()
-        spec.aws_account_id = '976651329757'
-        spec.organization = 'micronode'
+
+        if spec.backend_type == 's3':
+            spec.s3_bucket = input("S3 Bucket Name: ")
+        elif spec.backend_type == 'remote':
+            spec.organization = input("Organization ID: ")
 
         spec.run()
 
