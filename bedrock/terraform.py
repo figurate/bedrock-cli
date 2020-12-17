@@ -58,14 +58,20 @@ class TerraformSpec:
         if self.verbose:
             print(f"Importing environment variables: {self.evars}\n")
 
+        imported_vars = []
         environment = []
         for env_var in self.evars:
-            append_env(environment, env_var, True)
+            if append_env(environment, env_var, True):
+                imported_vars.append(env_var)
 
         # Append optional environment variables..
         for env_var in ['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY', 'AWS_SESSION_TOKEN', 'AWS_PROFILE', 'TF_ARGS',
                         'http_proxy', 'https_proxy', 'no_proxy']:
-            append_env(environment, env_var)
+            if append_env(environment, env_var):
+                imported_vars.append(env_var)
+
+        if self.verbose:
+            print(f"Imported environment variables: {imported_vars}\n")
 
         # Configure command line config
         if self.verbose:

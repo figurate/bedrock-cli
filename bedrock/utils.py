@@ -55,8 +55,11 @@ def current_workspace(path):
 def append_env(environment, env_var, warn_missing=False):
     if env_var in os.environ:
         environment.append(f'{env_var}={os.environ[env_var]}')
+        return True
     elif warn_missing:
         print(f'** WARNING - Missing environment variable: {env_var}')
+
+    return False
 
 
 # def assume_role(role_arn, role_session_name, role_duration):
