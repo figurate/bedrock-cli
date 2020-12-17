@@ -4,6 +4,7 @@
 Execute Terraform blueprints as Docker containers.
 """
 import docker
+import docker.errors
 import dockerpty
 from .utils import *
 
@@ -177,3 +178,5 @@ class TerraformSpec:
                 print(f"Aborting {self.blueprint_id}..")
                 if container is not None:
                     container.stop()
+            except docker.errors.ImageNotFound:
+                print(f"Blueprint image not found {image_ref}.. did you run with --pull option?")
