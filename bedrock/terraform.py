@@ -90,7 +90,9 @@ class TerraformSpec:
             else:
                 run_command = ' '.join(self.args) + f' -var-file="{workspace}.tfvars.json" /blueprint'
 
-        elif self.args[0] not in ['import', 'output', 'show', 'state', 'taint', 'untaint', 'version', 'workspace']:
+        elif self.args[0] in ['import']:
+            run_command = self.args[0] + ' -config=/blueprint ' + ' '.join(self.args[1:])
+        elif self.args[0] not in ['output', 'show', 'state', 'taint', 'untaint', 'version', 'workspace']:
             run_command = ' '.join(self.args) + ' /blueprint'
         else:
             run_command = ' '.join(self.args)
