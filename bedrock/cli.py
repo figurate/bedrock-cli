@@ -9,6 +9,7 @@ from .terraform import TerraformSpec
 from .backend import BackendSpec
 from .config import ConfigSpec
 from .blueprint import BlueprintSpec
+from .export import ExportSpec
 from .utils import read_blueprints, ANSIColors
 
 
@@ -22,6 +23,7 @@ class BedrockCli(object):
             {ANSIColors.BOLD}blueprint{ANSIColors.ENDC} - configure available blueprints
             {ANSIColors.BOLD}config{ANSIColors.ENDC} - configure instance variable overrides
             destroy
+            {ANSIColors.BOLD}export{ANSIColors.ENDC} - export blueprint configuration
             graph
             import
             init
@@ -45,7 +47,7 @@ class BedrockCli(object):
         parser.add_argument('-q', '--quiet', action='store_true', help='suppress execution output to stdout')
         parser.add_argument('-var-file', metavar='<var_file>', help='override default config')
         parser.add_argument('command', help='Subcommand to run', choices=['apply', 'destroy', 'force-unlock', 'graph', 'import', 'init', 'output', 'plan', 'providers', 'refresh', 'show',
-                                                                          'state', 'taint', 'untaint', 'version', 'workspace'] + ['blueprint', 'backend', 'config'])
+                                                                          'state', 'taint', 'untaint', 'version', 'workspace'] + ['blueprint', 'backend', 'config', 'export'])
         parser.add_argument('cmd_args', metavar='<cmd_args>',
                             help='additional arguments for sub-commands', nargs='*')
 
@@ -73,6 +75,8 @@ class BedrockCli(object):
             self.config(sys.argv[sys.argv.index(args.command) + 1:])
         elif args.command == 'blueprint':
             self.blueprint(sys.argv[sys.argv.index(args.command) + 1:])
+        elif args.command == 'export':
+            self.export(sys.argv[sys.argv.index(args.command) + 1:])
 
         sys.exit()
 
@@ -159,6 +163,20 @@ class BedrockCli(object):
         if len(args) > 0 and args[0] == 'add':
             spec.blueprint_id = input("Blueprint ID: ")
             spec.blueprint_image = input("Blueprint Image: ")
+
+        spec.run()
+
+    def export(self, args):
+        spec = ExportSpec(None, None, pull_image=self.pull_image, dry_run=self.dryrun, verbose=self.verbose)
+        blueprint_home = BlueprintSpec.get_blueprint_home()
+        blueprint = self.get_blueprint()
+        spec.blueprint_home = blueprint_home
+        spec.blueprint_id = blueprint[0]
+        spec.image = blueprint[1]['image']
+        spec.image_registry = BlueprintSpec.get_blueprint_registry()
+        spec.image_tag = BlueprintSpec.get_blueprint_tag()
+
+        spec.instance_name = 'tf_export'
 
         spec.run()
 
