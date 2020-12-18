@@ -7,22 +7,24 @@ A command line tool for managing Terraform blueprints.
 The Bedrock command line tool builds on the excellent features of Terraform to provide a "no-code" approach to
 provisioning infrastructure.
 
+
 ## Introduction
 
-Bedrock can be used as a drop-in replacement for Terraform, in that all the commands are the same with the exception
-of two key differences:
+Bedrock can be used as a drop-in replacement for Terraform, in that all the commands are the same except for two key
+differences:
 
 First, all commands are executed in the context of a `blueprint`, which is a predefined Terraform
 configuration. Each command will prompt for selection from a list of registered blueprints before executing
 the command.
 
 The other key difference is that all local state, modules, plugins, etc. are stored under a single directory, which
-by default is created in the user home directory and named `.bedrock`. This means that you don't need to change
-directories in order to run commands on different Terraform configurations.
+by default is the current user directory but can be defined as any local directory. This means that you don't need to 
+change directories in order to run commands on different Terraform configurations.
+
 
 ## Bedrock Commands
 
-To support these differences Bedrock introduces three additional commands that are not available with Terraform:
+To support these key differences Bedrock introduces three additional commands that are not available with Terraform:
 
 ### Backend
 
@@ -41,7 +43,7 @@ provided in the user home directory (i.e. `.terraformrc`).
 
 _NOTE:_ Terraform doesn't support different backend configurations for workspaces in a single configuration. This
 means that you must use the same state management configuration for all instances of a blueprint. If you need to
-manage multiple independent configuration sets you can override the blueprint home directory (see below). 
+manage multiple independent configuration sets you can create and run in different blueprint directories. 
 
 
 ### Config
@@ -58,6 +60,7 @@ with the Bedrock command line tool.
 
 To create a Bedrock-compatible blueprint you just need to create a Docker image that includes a version of Terraform,
 and the blueprint configuration under the `/blueprint` directory.
+
     
 ## Workspaces
 
@@ -70,6 +73,7 @@ be taken to define a workspace naming convention. For example, you may wish to p
 account number, followed by application name, environment, etc.
 
 As an example, to configure an ECS cluster I might create a workspace such as: `987654321-myapp-staging`
+
 
 ## Blueprint Home Directory
 
