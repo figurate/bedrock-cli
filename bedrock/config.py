@@ -12,7 +12,7 @@ class ConfigSpec:
         self.verbose = verbose
 
         # Blueprint home directory
-        self.blueprint_home = '~/.bedrock'
+        self.blueprint_home = '.'
 
         # Blueprint identifier
         self.blueprint_id = blueprint_id

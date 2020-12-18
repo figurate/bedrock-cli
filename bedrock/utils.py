@@ -31,7 +31,7 @@ def write_config(path, root, id, config):
         config_file.write(f'{json.dumps(config, indent=2)}\n')
 
 
-def read_blueprints(root):
+def read_blueprints(root='~/.bedrock'):
     try:
         with open(f'{os.path.expanduser(f"{root}")}/blueprints.json', 'r') as blueprint_file:
             return json.load(blueprint_file)
@@ -39,7 +39,7 @@ def read_blueprints(root):
         return {}
 
 
-def save_blueprints(blueprints, root):
+def save_blueprints(blueprints, root='~/.bedrock'):
     with open(f'{os.path.expanduser(f"{root}")}/blueprints.json', 'w') as blueprint_file:
         blueprint_file.write(f'{json.dumps(blueprints, indent=2)}\n')
 

@@ -14,7 +14,7 @@ class BlueprintSpec:
 
     @staticmethod
     def get_blueprint_home():
-        return os.environ.get('BLUEPRINT_HOME') if os.environ.get('BLUEPRINT_HOME') is not None else '~/.bedrock'
+        return os.environ.get('BLUEPRINT_HOME') if os.environ.get('BLUEPRINT_HOME') is not None else os.environ.get('PWD')
 
     @staticmethod
     def get_blueprint_registry():
@@ -32,9 +32,6 @@ class BlueprintSpec:
         # Enable verbose logging
         self.verbose = verbose
 
-        # Blueprint home directory
-        self.blueprint_home = '~/.bedrock'
-
         self.blueprint_id = blueprint_id
         self.blueprint_image = blueprint_image
 
@@ -42,7 +39,7 @@ class BlueprintSpec:
         if self.dry_run:
             print("Dry run enabled. No changes will be made.")
 
-        blueprints = read_blueprints(self.blueprint_home)
+        blueprints = read_blueprints()
 
         if self.blueprint_id is not None:
             blueprints[self.blueprint_id] = {
@@ -50,6 +47,6 @@ class BlueprintSpec:
             }
 
             if not self.dry_run:
-                save_blueprints(blueprints, self.blueprint_home)
+                save_blueprints(blueprints)
         else:
             print(json.dumps(blueprints, indent=2))

@@ -76,8 +76,8 @@ class BedrockCli(object):
 
         sys.exit()
 
-    def get_blueprint(self, blueprint_home):
-        blueprints = {**BlueprintSpec.default_blueprints, **read_blueprints(blueprint_home)}
+    def get_blueprint(self):
+        blueprints = {**BlueprintSpec.default_blueprints, **read_blueprints()}
 
         if self.blueprint_id in blueprints.keys():
             return [self.blueprint_id, blueprints[self.blueprint_id]]
@@ -102,7 +102,7 @@ class BedrockCli(object):
     def terraform(self, args, var_file=None):
         spec = TerraformSpec(None, None, pull_image=self.pull_image, dry_run=self.dryrun, verbose=self.verbose)
         blueprint_home = BlueprintSpec.get_blueprint_home()
-        blueprint = self.get_blueprint(blueprint_home)
+        blueprint = self.get_blueprint()
         spec.blueprint_home = blueprint_home
         spec.blueprint_id = blueprint[0]
         spec.image = blueprint[1]['image']
@@ -132,7 +132,7 @@ class BedrockCli(object):
         spec = BackendSpec(None, dry_run=self.dryrun, verbose=self.verbose)
         blueprint_home = BlueprintSpec.get_blueprint_home()
         spec.blueprint_home = blueprint_home
-        spec.blueprint_id = self.get_blueprint(blueprint_home)[0]
+        spec.blueprint_id = self.get_blueprint()[0]
         spec.backend_type = self.get_backend_type()
 
         if spec.backend_type == 's3':
@@ -146,7 +146,7 @@ class BedrockCli(object):
         spec = ConfigSpec(None, dry_run=self.dryrun, verbose=self.verbose)
         blueprint_home = BlueprintSpec.get_blueprint_home()
         spec.blueprint_home = blueprint_home
-        spec.blueprint_id = self.get_blueprint(blueprint_home)[0]
+        spec.blueprint_id = self.get_blueprint()[0]
         spec.cvars = {}
         for cnf in args:
             cvar = cnf.split('=')
@@ -157,8 +157,6 @@ class BedrockCli(object):
     def blueprint(self, args):
         spec = BlueprintSpec(None, None, dry_run=self.dryrun, verbose=self.verbose)
         if len(args) > 0 and args[0] == 'add':
-            blueprint_home = BlueprintSpec.get_blueprint_home()
-            spec.blueprint_home = blueprint_home
             spec.blueprint_id = input("Blueprint ID: ")
             spec.blueprint_image = input("Blueprint Image: ")
 
