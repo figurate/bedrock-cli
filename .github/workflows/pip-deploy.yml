@@ -9,9 +9,7 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python 3.8
@@ -35,9 +33,26 @@ jobs:
       - name: Create distribution
         run: |
           python3 setup.py sdist bdist_wheel
+
+  publish-alpha:
+    runs-on: ubuntu-latest
+    if: contains(github.ref, "alpha")
+    needs: build
+    steps:
       - name: Publish a Python distribution to PyPI
         uses: pypa/gh-action-pypi-publish@master
         with:
           user: __token__
           password: ${{ secrets.testpypi_password }}
           repository_url: https://test.pypi.org/legacy/
+
+  publish:
+    runs-on: ubuntu-latest
+    if: contains(github.ref, "alpha") != true
+    needs: build
+    steps:
+      - name: Publish a Python distribution to PyPI
+        uses: pypa/gh-action-pypi-publish@master
+        with:
+          user: __token__
+          password: ${{ secrets.pypi_password }}
