@@ -6,17 +6,24 @@ A command line tool for managing Terraform blueprints.
 
 The bedrock CLI is a simple tool to help manage the execution of Terraform blueprints.
 
-You may manage a collection of blueprints that you use across multiple environments, which becomes difficult to 
-manage as the collection grows larger.
+You typically may have a number of Terraform configurations that you use across multiple environments (e.g. dev, test prod, etc.).
+As these configurations grow that can become difficult to manage.
 
-Bedrock makes it easy to provision blueprints from anywhere so you can focus on building rather than configuring 
+Bedrock makes it easy to provision configuration _blueprints_ from anywhere so you can focus on building rather than configuring 
 your environments.
 
-For bedrock to manage your blueprints all you need is a Docker image (one for each blueprint), with the blueprint 
+### What is a Blueprint?
+
+We all know the benefits of Terraform Modules, and the many ways that they can be published and consumed. Bedrock extends on this concept
+of portable configurations to include things that you wouldn't usually package with a module (e.g. provider configuration, etc.)
+
+Essentially a Blueprint is a complete Terraform configuration packaged as a Docker image that can be executed anywhere Docker is supported.
+
+For Bedrock to manage your blueprints all you need is a Docker image (one for each blueprint), with the Terraform 
 configuration in the `/blueprint` path. The image should also include a Terraform runtime as the default entry point
 (see the official Terraform Docker image for example).
 
-Bedrock will manage the backend configuration, inputs and provider configuration in a central location, such that 
+Bedrock will manage the backend configuration, inputs and provider configuration in a configurable location, such that 
 your blueprint instances are accessible and easily managed from anywhere.
 
 
