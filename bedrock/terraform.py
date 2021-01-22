@@ -88,14 +88,17 @@ class TerraformSpec:
         # Configure variables..
         workspace = current_workspace(self.blueprint_id, self.blueprint_home)
 
-        if self.args[0] in ['plan', 'apply', 'refresh']:
+        if self.args[0] in ['plan', 'apply', 'refresh', 'destroy']:
             if self.var_file is not None:
                 run_command = ' '.join(self.args) + f' -var-file="{os.path.basename(self.var_file)}" /blueprint'
             else:
                 run_command = ' '.join(self.args) + f' -var-file="{workspace}.tfvars.json" /blueprint'
 
         elif self.args[0] in ['import']:
-            run_command = self.args[0] + ' -config=/blueprint ' + ' '.join(self.args[1:])
+            if self.var_file is not None:
+                run_command = self.args[0] + f' -config=/blueprint -var-file="{os.path.basename(self.var_file)}" ' + ' '.join(self.args[1:])
+            else:
+                run_command = self.args[0] + f' -config=/blueprint -var-file="{workspace}.tfvars.json" ' + ' '.join(self.args[1:])
         elif self.args[0] not in ['output', 'show', 'state', 'taint', 'untaint', 'version', 'workspace']:
             run_command = ' '.join(self.args) + ' /blueprint'
         else:
