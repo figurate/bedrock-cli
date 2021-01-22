@@ -7,8 +7,8 @@ class BlueprintSpec:
         "aws/ecr-repository": {
             "image": "bedrock/aws-ecr-repository"
         },
-        "aws/ecs-task-definition": {
-            "image": "bedrock/aws-ecs-task-definition"
+        "ecs/task-definition": {
+            "image": "bedrock/ecs-task-definition"
         }
     }
 
