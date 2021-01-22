@@ -26,4 +26,8 @@ class ConfigSpec:
 
         if not self.dry_run:
             workspace = current_workspace(self.blueprint_id, self.blueprint_home)
+
+            if self.verbose:
+                print(f"Writing config changes to: {self.blueprint_home}/{self.blueprint_id}/{workspace}.tfvars.json\n")
+
             write_config(self.blueprint_id, self.blueprint_home, workspace, self.cvars)
