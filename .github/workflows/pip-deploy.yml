@@ -34,11 +34,23 @@ jobs:
         run: |
           python3 setup.py sdist bdist_wheel
 
+      - name: Upload artefacts
+        uses: actions/upload-artifact@master
+        with:
+          name: dist
+          path: dist
+
   publish-alpha:
     runs-on: ubuntu-latest
     if: contains(github.ref, 'alpha')
     needs: build
     steps:
+      - name: Download artefacts
+        uses: actions/download-artifact@master
+        with:
+          name: dist
+          path: dist
+
       - name: Publish a Python distribution to PyPI
         uses: pypa/gh-action-pypi-publish@master
         with:
@@ -51,6 +63,12 @@ jobs:
     if: contains(github.ref, 'alpha') != true
     needs: build
     steps:
+      - name: Download artefacts
+        uses: actions/download-artifact@master
+        with:
+          name: dist
+          path: dist
+
       - name: Publish a Python distribution to PyPI
         uses: pypa/gh-action-pypi-publish@master
         with:
