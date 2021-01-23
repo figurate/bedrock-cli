@@ -7,10 +7,22 @@ class BlueprintSpec:
         "aws/ecr-repository": {
             "image": "bedrock/aws-ecr-repository"
         },
-        "aws/ecs-task-definition": {
-            "image": "bedrock/aws-ecs-task-definition"
+        "ecs/task-definition": {
+            "image": "bedrock/ecs-task-definition"
         }
     }
+
+    @staticmethod
+    def get_blueprint_home():
+        return os.environ.get('BLUEPRINT_HOME') if os.environ.get('BLUEPRINT_HOME') is not None else os.environ.get('PWD')
+
+    @staticmethod
+    def get_blueprint_registry():
+        return os.environ.get('BLUEPRINT_REGISTRY')
+
+    @staticmethod
+    def get_blueprint_tag():
+        return os.environ.get('BLUEPRINT_TAG')
 
     def __init__(self, blueprint_id, blueprint_image, dry_run=False, verbose=False):
 

@@ -4,49 +4,49 @@ import pathlib
 import json
 
 
-def init_path(path):
-    os.makedirs(os.path.expanduser(f'~/.bedrock/{path}'), exist_ok=True)
-    pathlib.Path(os.path.expanduser(f'~/.bedrock/{path}/backend.tf')).touch()
+def init_path(path, root):
+    os.makedirs(os.path.expanduser(f'{root}/{path}'), exist_ok=True)
+    pathlib.Path(os.path.expanduser(f'{root}/{path}/backend.tf')).touch()
 
 
-def init_config(path, workspace='default'):
-    init_path(path)
-    config_path = f'{os.path.expanduser(f"~/.bedrock/{path}")}/{workspace}.tfvars.json'
+def init_config(path, root, workspace='default'):
+    init_path(path, root)
+    config_path = f'{os.path.expanduser(f"{root}/{path}")}/{workspace}.tfvars.json'
     if not os.path.exists(config_path):
         with open(config_path, 'w') as config_file:
             config_file.write('{}\n')
 
 
-def write_backend(path, backend):
-    init_path(path)
+def write_backend(path, root, backend):
+    init_path(path, root)
 
-    with open(f'{os.path.expanduser(f"~/.bedrock/{path}")}/backend.tf', 'w') as config_file:
+    with open(f'{os.path.expanduser(f"{root}/{path}")}/backend.tf', 'w') as config_file:
         config_file.write(backend + '\n')
 
 
-def write_config(path, id, config):
-    init_path(path)
+def write_config(path, root, id, config):
+    init_path(path, root)
 
-    with open(f'{os.path.expanduser(f"~/.bedrock/{path}")}/{id}.tfvars.json', 'w') as config_file:
+    with open(f'{os.path.expanduser(f"{root}/{path}")}/{id}.tfvars.json', 'w') as config_file:
         config_file.write(f'{json.dumps(config, indent=2)}\n')
 
 
-def read_blueprints():
+def read_blueprints(root='~/.bedrock'):
     try:
-        with open(f'{os.path.expanduser(f"~/.bedrock")}/blueprints.json', 'r') as blueprint_file:
+        with open(f'{os.path.expanduser(f"{root}")}/blueprints.json', 'r') as blueprint_file:
             return json.load(blueprint_file)
     except IOError:
         return {}
 
 
-def save_blueprints(blueprints):
-    with open(f'{os.path.expanduser(f"~/.bedrock")}/blueprints.json', 'w') as blueprint_file:
+def save_blueprints(blueprints, root='~/.bedrock'):
+    with open(f'{os.path.expanduser(f"{root}")}/blueprints.json', 'w') as blueprint_file:
         blueprint_file.write(f'{json.dumps(blueprints, indent=2)}\n')
 
 
-def current_workspace(path):
+def current_workspace(path, root):
     try:
-        with open(f'{os.path.expanduser(f"~/.bedrock/{path}")}/.terraform/environment', 'r') as env_file:
+        with open(f'{os.path.expanduser(f"{root}/{path}")}/.terraform/environment', 'r') as env_file:
             return env_file.readline()
     except IOError:
         return 'default'
@@ -55,8 +55,11 @@ def current_workspace(path):
 def append_env(environment, env_var, warn_missing=False):
     if env_var in os.environ:
         environment.append(f'{env_var}={os.environ[env_var]}')
+        return True
     elif warn_missing:
         print(f'** WARNING - Missing environment variable: {env_var}')
+
+    return False
 
 
 # def assume_role(role_arn, role_session_name, role_duration):
