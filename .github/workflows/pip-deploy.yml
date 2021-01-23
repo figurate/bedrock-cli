@@ -36,7 +36,7 @@ jobs:
 
   publish-alpha:
     runs-on: ubuntu-latest
-    if: contains(github.ref, "alpha")
+    if: contains(github.ref, 'alpha')
     needs: build
     steps:
       - name: Publish a Python distribution to PyPI
@@ -48,7 +48,7 @@ jobs:
 
   publish:
     runs-on: ubuntu-latest
-    if: contains(github.ref, "alpha") != true
+    if: contains(github.ref, 'alpha') != true
     needs: build
     steps:
       - name: Publish a Python distribution to PyPI
